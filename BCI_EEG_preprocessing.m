@@ -58,27 +58,39 @@ end
 %% filtering
 % theta (4-7 Hz),alpha (8-13 Hz), low beta (14-21 Hz), high beta (22-29 Hz) and gamma (30-47 Hz).
 % 70 features = 14 channel * 5 frequency bands 
-[Atheta,Btheta,Ctheta,Dtheta] = cheby2(1,20,[4 7]/64, 'bandpass'); % 64 = 128/2
-[Aalpha,Balpha,Calpha,Dalpha] = cheby2(1,20,[8 13]/64, 'bandpass');
-[Albeta,Blbeta,Clbeta,Dlbeta] = cheby2(1,20,[14 21]/64, 'bandpass');
-[Ahbeta,Bhbeta,Chbeta,Dhbeta] = cheby2(1,20,[22 29]/64, 'bandpass');
-[Agamma,Bgamma,Cgamma,Dgamma] = cheby2(1,20,[30 47]/64, 'bandpass');
 
-% bpfilter = designfilt('bandpassiir','FilterOrder',2, ...
-%      'StopbandFrequency1',4,'StopbandFrequency2',47, ...
-%      'StopbandAttenuation',20,'SampleRate',128);
-sos_theta = ss2sos(Atheta,Btheta,Ctheta,Dtheta);
-sos_alpha = ss2sos(Aalpha,Balpha,Calpha,Dalpha);
-sos_lbeta = ss2sos(Albeta,Blbeta,Clbeta,Dlbeta);
-sos_hbeta = ss2sos(Ahbeta,Bhbeta,Chbeta,Dhbeta);
-sos_gamma = ss2sos(Agamma,Bgamma,Cgamma,Dgamma);
+% [Atheta,Btheta,Ctheta,Dtheta] = cheby2(1,20,[4 7]/64, 'bandpass'); % 64 = 128/2
+% [Aalpha,Balpha,Calpha,Dalpha] = cheby2(1,20,[8 13]/64, 'bandpass');
+% [Albeta,Blbeta,Clbeta,Dlbeta] = cheby2(1,20,[14 21]/64, 'bandpass');
+% [Ahbeta,Bhbeta,Chbeta,Dhbeta] = cheby2(1,20,[22 29]/64, 'bandpass');
+% [Agamma,Bgamma,Cgamma,Dgamma] = cheby2(1,20,[30 47]/64, 'bandpass');
+[ztheta,ptheta,ktheta] = cheby2(1,20,[4 7]/64, 'bandpass');
+[zalpha,palpha,kalpha] = cheby2(1,20,[8 13]/64, 'bandpass');
+[zlbeta,plbeta,klbeta] = cheby2(1,20,[14 21]/64, 'bandpass');
+[zhbeta,phbeta,khbeta] = cheby2(1,20,[22 29]/64, 'bandpass');
+[zgamma,pgamma,kgamma] = cheby2(1,20,[30 47]/64, 'bandpass');
+[sos_theta, g_theta] = zp2sos(ztheta,ptheta,ktheta);
+[sos_alpha, g_alpha] = zp2sos(zalpha,palpha,kalpha);
+[sos_lbeta, g_lbeta] = zp2sos(zlbeta,plbeta,klbeta);
+[sos_hbeta, g_hbeta] = zp2sos(zhbeta,phbeta,khbeta);
+[sos_gamma, g_gamma] = zp2sos(zgamma,pgamma,kgamma);
 
-theta1_signalout = filtfilt(sos_theta, class1_signal);
-alpha1_signalout = filtfilt(sos_alpha, class1_signal);
-lbeta1_signalout = filtfilt(sos_lbeta, class1_signal);
-hbeta1_signalout = filtfilt(sos_hbeta, class1_signal);
-gamma1_signalout = filtfilt(sos_gamma, class1_signal);
+theta1_signalout = filtfilt(sos_theta, g_theta, class1_signal);
+alpha1_signalout = filtfilt(sos_alpha, g_alpha, class1_signal);
+lbeta1_signalout = filtfilt(sos_lbeta, g_lbeta, class1_signal);
+hbeta1_signalout = filtfilt(sos_hbeta, g_hbeta, class1_signal);
+gamma1_signalout = filtfilt(sos_gamma, g_gamma, class1_signal);
 
-sos_theta = ss2sos(Atheta,Btheta,Ctheta,Dtheta);
-fvt = fvtool(sos,bpfilter,'Fs',128);
-legend(fvt,'cheby2','designfilt')
+%%
+theta2_signalout = filtfilt(sos_theta, g_theta, class2_signal);
+alpha2_signalout = filtfilt(sos_alpha, g_alpha, class2_signal);
+lbeta2_signalout = filtfilt(sos_lbeta, g_lbeta, class2_signal);
+hbeta2_signalout = filtfilt(sos_hbeta, g_hbeta, class2_signal);
+gamma2_signalout = filtfilt(sos_gamma, g_gamma, class2_signal);
+
+%%
+theta3_signalout = filtfilt(sos_theta, g_theta, class3_signal);
+alpha3_signalout = filtfilt(sos_alpha, g_alpha, class3_signal);
+lbeta3_signalout = filtfilt(sos_lbeta, g_lbeta, class3_signal);
+hbeta3_signalout = filtfilt(sos_hbeta, g_hbeta, class3_signal);
+gamma3_signalout = filtfilt(sos_gamma, g_gamma, class3_signal);
