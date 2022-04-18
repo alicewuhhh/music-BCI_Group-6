@@ -36,8 +36,7 @@ X_test = sc.transform(X_test)
 # print(X_test.shape)
 
 
-
-#Create a svm Classifier
+#Create a SVM Classifier
 # svm = svm.LinearSVC(kernel='linear') # Linear Kernel
 svm = OneVsRestClassifier(SVC(kernel='linear', probability=True, class_weight='balanced'), n_jobs=-1)
 #Train the model using the training sets
@@ -45,6 +44,14 @@ svm.fit(X_train, y_train.ravel())
 
 #Predict the response for test dataset
 y_pred = svm.predict(X_test)
+
+from datetime import datetime as dt
+
+start = dt.now()
+# process stuff
+running_secs = (dt.now() - start).seconds
+msg = "Execution took: %s secs (Wall clock time)" % running_secs
+print(msg)
 
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
@@ -55,3 +62,4 @@ print('Confusion matrix: [[tn fp]')
 print('                   [fn tp]]')
 print(confusion_matrix(y_test, y_pred))
 print('The SVM Model Accuracy is ' + str(accuracy_score(y_test, y_pred)))
+
